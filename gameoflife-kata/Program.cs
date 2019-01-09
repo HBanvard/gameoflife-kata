@@ -28,7 +28,22 @@ namespace gameoflife_kata
 
         public static bool CalculateNextState(Cell cell)
         {
-            throw new NotImplementedException();
+            if (cell.IsLive)
+            {
+                if (cell.NumberOfLiveNeighbors == 2 || cell.NumberOfLiveNeighbors == 3)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            if (cell.NumberOfLiveNeighbors == 3)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
