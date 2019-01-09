@@ -39,5 +39,33 @@ namespace gameoflife_kata_tests
             // Confirm non-adjacent cells are not counted
             Assert.AreEqual(3, Program.CountLiveNeighbors(nonEdgeCell, cells));
         }
+
+        [TestMethod]
+        public void CalculateNextStateTest()
+        {
+            // Test for live cell
+            Cell liveCell = new Cell(0, 0, true);
+            liveCell.NumberOfLiveNeighbors = 1;
+
+            Assert.AreEqual(false, Program.CalculateNextState(liveCell));
+
+            liveCell.NumberOfLiveNeighbors = 2;
+            Assert.AreEqual(true, Program.CalculateNextState(liveCell));
+
+            liveCell.NumberOfLiveNeighbors = 4;
+            Assert.AreEqual(false, Program.CalculateNextState(liveCell));
+
+            // Test for dead cell
+            Cell deadCell = new Cell(0, 4, false);
+            deadCell.NumberOfLiveNeighbors = 1;
+
+            Assert.AreEqual(false, Program.CalculateNextState(deadCell));
+
+            deadCell.NumberOfLiveNeighbors = 3;
+            Assert.AreEqual(true, Program.CalculateNextState(deadCell));
+
+            deadCell.NumberOfLiveNeighbors = 4;
+            Assert.AreEqual(false, Program.CalculateNextState(deadCell));
+        }
     }
 }

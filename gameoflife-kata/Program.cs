@@ -25,5 +25,10 @@ namespace gameoflife_kata
 
             return numberOfLiveNeighbors;
         }
+
+        public static bool CalculateNextState(Cell cell)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
