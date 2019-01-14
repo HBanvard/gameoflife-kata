@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace gameoflife_kata
@@ -9,25 +7,30 @@ namespace gameoflife_kata
     {
         public static void Main(string[] args)
         {
-            List<Cell> cells = GetInput();
-            DisplayGrid(cells);
+            int[] gridDimensions = GetGridDimensions();
+            string[] gridContents = GetGridContents(gridDimensions[0], gridDimensions[1]);
+            Grid grid = new Grid(gridContents);
+            grid.Display();
 
             bool done = false;
             while (!done)
             {
-                foreach (Cell cell in cells)
+                for (int rowCounter = 0; rowCounter < grid.Cells.GetLength(0); rowCounter++)
                 {
-                    cell.NumberOfLiveNeighbors = CountLiveNeighbors(cell, cells);
+                    for (int columnCounter = 0; columnCounter < grid.Cells.GetLength(1); columnCounter++)
+                    {
+                        grid.Cells[rowCounter, columnCounter].NumberOfLiveNeighbors = grid.CountLiveNeighbors(rowCounter, columnCounter);
+                    }
                 }
-                foreach (Cell cell in cells)
+                foreach (Cell cell in grid.Cells)
                 {
-                    cell.IsLive = CalculateNextState(cell);
+                    cell.IsLive = cell.CalculateNextState();
                 }
 
                 Console.WriteLine();
                 Console.WriteLine("Here is the next state of the grid:");
                 Console.WriteLine();
-                DisplayGrid(cells);
+                grid.Display();
 
                 Console.WriteLine();
                 Console.WriteLine("Would you like to continue? Enter (Y)es or (N)o:");
@@ -48,24 +51,26 @@ namespace gameoflife_kata
             }
         }
 
-        public static List<Cell> GetInput()
+        public static int[] GetGridDimensions()
         {
-            List<Cell> cells = new List<Cell>();
+            int[] gridDimensions = new int[2];
 
             Console.WriteLine("Welcome to the Game of Life!");
             Console.WriteLine();
             Console.WriteLine("You will create an grid of cells where each cell is either \"alive\" or \"dead.\"");
 
             Console.WriteLine();
-            int rows = 0;
-            bool rowsSuccess = false;
-            while (!rowsSuccess)
+            while (gridDimensions[0] < 1)
             {
                 Console.WriteLine("Please enter the number of rows:");
                 try
                 {
-                    rows = int.Parse(Console.ReadLine());
-                    rowsSuccess = true;
+                    gridDimensions[0] = int.Parse(Console.ReadLine());
+                    if (gridDimensions[0] < 1)
+                    {
+                        Console.WriteLine();
+                        Console.Write("Number of rows must be at least 1. ");
+                    }
                 }
                 catch
                 {
@@ -75,30 +80,39 @@ namespace gameoflife_kata
             }
 
             Console.WriteLine();
-            int columns = 0;
-            bool columnsSuccess = false;
-            while (!columnsSuccess)
+            while (gridDimensions[1] < 1)
             {
                 Console.WriteLine("Please enter the number of columns:");
                 try
                 {
-                    columns = int.Parse(Console.ReadLine());
-                    columnsSuccess = true;
+                    gridDimensions[1] = int.Parse(Console.ReadLine());
+                    if (gridDimensions[1] < 1)
+                    {
+                        Console.WriteLine();
+                        Console.Write("Number of columns must be at least 1. ");
+                    }
                 }
                 catch
                 {
                     Console.WriteLine();
                     Console.Write("Not a valid number. ");
-                }
+                }               
             }
+
+            return gridDimensions;
+        }
+
+        public static string[] GetGridContents(int rows, int columns)
+        {
+            string[] gridContents = new string[rows];
 
             Console.WriteLine();
             Console.WriteLine($"To create the grid, enter {rows} lines of {columns} characters each.");
-            int counter = 0;
-            while (counter <= rows - 1)
+
+            for (int rowCounter = 0; rowCounter <= rows - 1; rowCounter++)
             {
                 Console.WriteLine();
-                Console.WriteLine($"Line {counter + 1}:\tPlease enter {columns} characters with no spaces.");
+                Console.WriteLine($"Line {rowCounter + 1}:\tPlease enter {columns} characters with no spaces.");
                 Console.WriteLine("\tEach character must be either the letter \"o\" for an \"alive\" cell or the period symbol \".\" for a \"dead\" cell.");
 
                 string input = Console.ReadLine();
@@ -109,69 +123,14 @@ namespace gameoflife_kata
                     input = Console.ReadLine();
                 }
 
-                for (int i = 0; i < columns; i++)
-                {
-                    cells.Add(new Cell(counter, i, input[i] == 'o' ? true : false));
-                }
-
-                counter++;
+                gridContents[rowCounter] = input;
             }
 
             Console.WriteLine();
             Console.WriteLine("Here is the grid you entered:");
             Console.WriteLine();
 
-            return cells;
-        }
-
-        public static void DisplayGrid(List<Cell> cells)
-        {
-            int counter = 0;
-            while (counter <= cells.Max(c => c.Row))
-            {
-                foreach (Cell cell in cells.Where(c => c.Row == counter).OrderBy(c => c.Column))
-                {
-                    Console.Write(cell.IsLive ? "o" : ".");
-                }
-                counter++;
-                Console.WriteLine();
-            }
-        }
-
-        public static int CountLiveNeighbors(Cell cell, List<Cell> cells)
-        {
-            int numberOfLiveNeighbors = 0;
-
-            foreach (Cell testCell in cells)
-            {
-                if (testCell.IsLive && ((Math.Abs(testCell.Row - cell.Row) == 1 && Math.Abs(testCell.Column - cell.Column) <= 1) ||
-                   (testCell.Row == cell.Row && Math.Abs(testCell.Column - cell.Column) == 1)))
-                {
-                    numberOfLiveNeighbors++;
-                }
-            }
-
-            return numberOfLiveNeighbors;
-        }
-
-        public static bool CalculateNextState(Cell cell)
-        {
-            if (cell.IsLive)
-            {
-                if (cell.NumberOfLiveNeighbors == 2 || cell.NumberOfLiveNeighbors == 3)
-                {
-                    return true;
-                }
-
-                return false;
-            }
-
-            if (cell.NumberOfLiveNeighbors == 3)
-            {
-                return true;
-            }
-
-            return false;
+            return gridContents;
         }
     }
 }
