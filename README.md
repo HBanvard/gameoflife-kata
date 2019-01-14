@@ -11,8 +11,8 @@ The program accepts an initial grid from the user where each cell in the grid is
 As additional features, the program allows the user to specify the size of the grid and to choose whether to continue calculating and displaying the next state of the grid.
 
 ## Algorithm and Design Choices
-The program stores the initial grid provided by the user in a list of objects of type `Cell`. Each cell has integer `Row` and `Column` properties calculated by reference to the size of the grid specified by the user. The initial state (alive or dead) of each cell is stored in a boolean `IsLive` property.
+The program stores the initial grid provided by the user in a two-dimensional array of objects of type `Cell`. The initial state (alive or dead) of each cell is stored in a boolean `IsLive` property.
 
-The program calculates the next state of the grid by calling two methods on each cell:
-* First, the `CountLiveNeighbors()` method counts the number of cells adjacent to a cell that are alive and stores the result in the cell's `NumberOfLiveNeighbors` property. Adjacent cells are those (1) one row away from the cell and either in the same column as the cell or one column away from the cell and (2) in the same row as the cell and one column away from the cell.
-* Next, the `CalculateNextState()` method updates the `IsLive` property of a cell for the next state of the grid by applying the rules of the game to the cell's existing `IsLive` and `NumberOfLiveNeighbors` properties.
+The program calls two methods to calculate the next state of the grid:
+* First, the `CountLiveNeighbors()` method is called to count the number of alive cells adjacent to each cell in the array. The resulting number is stored in the cell's `NumberOfLiveNeighbors` property. Adjacent cells are those (1) one row away from the cell and either in the same column as the cell or one column away from the cell and (2) in the same row as the cell and one column away from the cell.
+* Next, the `CalculateNextState()` method is called on each cell in the array. This method updates each cell's `IsLive` property for the next state of the grid by applying the rules of the game to the cell's existing `IsLive` and `NumberOfLiveNeighbors` properties.
